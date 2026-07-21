@@ -1,0 +1,35 @@
+
+
+services:
+  app:
+    build:
+      dockerfile: ./Dockerfile
+    command:
+      - "gunicorn"
+      - "mysite.wsgi:application"
+      - "--bind"
+      - "0.0.0.0:8000"
+    volumes:
+      - "./mysite/database:/app/database"
+    ports:
+      - "8000:8000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "3"
+    env_file:
+      - .env
+    restart: always
+
+
+  migrate:
+    build:
+      dockerfile: ./Dockerfile
+    command:
+      - "python"
+      - "manage.py"
+      - "migrate"
+    volumes:
+      - "./mysite/database:/app/database"
+
